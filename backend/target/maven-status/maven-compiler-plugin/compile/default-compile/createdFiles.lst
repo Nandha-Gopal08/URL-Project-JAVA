@@ -1,0 +1,13 @@
+com\urlverification\repository\URLQueueRepository.class
+com\urlverification\controller\UserController.class
+com\urlverification\model\User.class
+com\urlverification\UrlVerificationApplication.class
+com\urlverification\repository\URLVerificationRepository.class
+com\urlverification\checker\URLCheckResult.class
+com\urlverification\service\UserService.class
+com\urlverification\model\URLVerification.class
+com\urlverification\repository\UserRepository.class
+com\urlverification\checker\URLChecker.class
+com\urlverification\service\URLVerificationService.class
+com\urlverification\controller\URLVerificationController.class
+com\urlverification\model\URLQueue.class

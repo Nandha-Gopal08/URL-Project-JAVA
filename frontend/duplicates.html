@@ -1,0 +1,1307 @@
+<!-- STEP 6: duplicates.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Duplicate URLs</title>
+
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+    color: #1e293b;
+}
+
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    background: #101828;
+    color: white;
+    padding: 20px 12px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    margin-bottom: 25px;
+}
+
+.logo-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #2563eb, #06b6d4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-text {
+    font-weight: bold;
+}
+
+.logo-text span {
+    display: block;
+    font-size: 11px;
+    color: #94a3b8;
+    font-weight: normal;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    margin-bottom: 5px;
+    border-radius: 8px;
+    color: #cbd5e1;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.nav-item:hover {
+    background: #1e293b;
+    color: white;
+}
+
+.nav-item.active {
+    background: linear-gradient(135deg, #2563eb, #06b6d4);
+    color: white;
+}
+
+.main {
+    margin-left: 250px;
+    min-height: 100vh;
+}
+
+.topbar {
+    height: 65px;
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    padding: 0 25px;
+    font-weight: bold;
+}
+
+.content {
+    padding: 30px;
+}
+
+.page-title {
+    margin-bottom: 25px;
+}
+
+.page-title h2 {
+    font-size: 25px;
+    margin-bottom: 6px;
+}
+
+.page-title p {
+    color: #64748b;
+    font-size: 13px;
+}
+
+.card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 15px;
+    padding: 22px;
+    margin-bottom: 22px;
+    box-shadow: 0 5px 18px rgba(0,0,0,0.05);
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 22px;
+}
+
+.stat-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 20px;
+}
+
+.stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: #eff6ff;
+    color: #2563eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.stat-label {
+    color: #64748b;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.card-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.card-subtitle {
+    color: #64748b;
+    font-size: 12px;
+    margin-bottom: 18px;
+}
+
+.search-box {
+    display: flex;
+    gap: 10px;
+}
+
+.search-box input {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #dbe1e8;
+    border-radius: 8px;
+    outline: none;
+}
+
+.search-box input:focus {
+    border-color: #2563eb;
+}
+
+button {
+    border: none;
+    border-radius: 8px;
+    padding: 11px 16px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #2563eb, #06b6d4);
+    color: white;
+}
+
+.btn-secondary {
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    color: #1e293b;
+}
+
+.message {
+    margin-top: 12px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.success {
+    color: #16a34a;
+}
+
+.error {
+    color: #dc2626;
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 850px;
+}
+
+th {
+    text-align: left;
+    padding: 13px 15px;
+    border-bottom: 1px solid #e2e8f0;
+    color: #64748b;
+    font-size: 11px;
+    text-transform: uppercase;
+}
+
+td {
+    padding: 14px 15px;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 13px;
+}
+
+tr:hover {
+    background: #f8fafc;
+}
+
+.url {
+    max-width: 350px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.url i {
+    color: #2563eb;
+    margin-right: 7px;
+}
+
+.badge {
+    display: inline-block;
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.badge-warning {
+    background: #fff7ed;
+    color: #ea580c;
+}
+
+.badge-success {
+    background: #f0fdf4;
+    color: #16a34a;
+}
+
+.empty {
+    text-align: center;
+    padding: 50px;
+    color: #64748b;
+}
+
+.empty i {
+    display: block;
+    font-size: 30px;
+    color: #cbd5e1;
+    margin-bottom: 12px;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-box {
+    background: white;
+    width: 90%;
+    max-width: 650px;
+    border-radius: 15px;
+    padding: 25px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.close {
+    background: #f1f5f9;
+    color: #1e293b;
+}
+
+.history-item {
+    padding: 15px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.history-item div {
+    margin-bottom: 5px;
+    font-size: 13px;
+}
+
+@media(max-width: 850px) {
+
+    .sidebar {
+        display: none;
+    }
+
+    .main {
+        margin-left: 0;
+    }
+
+    .content {
+        padding: 18px;
+    }
+
+    .stats {
+        grid-template-columns: 1fr;
+    }
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<aside class="sidebar">
+
+    <div class="logo">
+
+        <div class="logo-icon">
+            <i class="fa-solid fa-shield-halved"></i>
+        </div>
+
+        <div class="logo-text">
+            URL Verification
+            <span>System</span>
+        </div>
+
+    </div>
+
+
+    <a href="dashboard.html" class="nav-item">
+        <i class="fa-solid fa-gauge-high"></i>
+        Dashboard
+    </a>
+
+
+    <a href="verify.html" class="nav-item">
+        <i class="fa-solid fa-link"></i>
+        Verify URL
+    </a>
+
+
+    <a href="queue.html" class="nav-item">
+        <i class="fa-solid fa-list-check"></i>
+        URL Queue
+    </a>
+
+
+    <a href="history.html" class="nav-item">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+        Verification History
+    </a>
+
+
+    <a href="duplicates.html" class="nav-item active">
+        <i class="fa-solid fa-clone"></i>
+        Duplicate URLs
+    </a>
+
+
+    <a href="statistics.html" class="nav-item">
+        <i class="fa-solid fa-chart-column"></i>
+        Statistics
+    </a>
+
+
+    <br>
+
+
+    <a href="settings.html" class="nav-item">
+        <i class="fa-solid fa-gear"></i>
+        Settings
+    </a>
+
+
+    <a href="login.html" class="nav-item" id="logout">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        Logout
+    </a>
+
+</aside>
+
+
+<main class="main">
+
+
+    <div class="topbar">
+        Duplicate URLs
+    </div>
+
+
+    <div class="content">
+
+
+        <div class="page-title">
+
+            <h2>Duplicate URLs</h2>
+
+            <p>
+                URLs that have been verified more than once.
+            </p>
+
+        </div>
+
+
+        <div class="stats">
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    <i class="fa-solid fa-clone"></i>
+                </div>
+
+                <div
+                    class="stat-value"
+                    id="duplicateCount"
+                >
+                    0
+                </div>
+
+                <div class="stat-label">
+                    Duplicate URLs
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    <i class="fa-solid fa-list"></i>
+                </div>
+
+                <div
+                    class="stat-value"
+                    id="verificationCount"
+                >
+                    0
+                </div>
+
+                <div class="stat-label">
+                    Duplicate Verifications
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    <i class="fa-solid fa-chart-simple"></i>
+                </div>
+
+                <div
+                    class="stat-value"
+                    id="averageCount"
+                >
+                    0
+                </div>
+
+                <div class="stat-label">
+                    Average Checks Per URL
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="card">
+
+
+            <div class="card-title">
+                Search Duplicate URLs
+            </div>
+
+            <div class="card-subtitle">
+                Search URLs from the verification database.
+            </div>
+
+
+            <div class="search-box">
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search duplicate URL..."
+                >
+
+
+                <button
+                    class="btn-secondary"
+                    id="refreshButton"
+                >
+
+                    <i class="fa-solid fa-rotate"></i>
+
+                    Refresh
+
+                </button>
+
+            </div>
+
+
+            <div
+                id="message"
+                class="message"
+            ></div>
+
+
+        </div>
+
+
+        <div class="card">
+
+
+            <div class="card-title">
+                Duplicate URL Records
+            </div>
+
+            <div class="card-subtitle">
+                Grouped duplicate verification records.
+            </div>
+
+
+            <div class="table-container">
+
+
+                <table>
+
+
+                    <thead>
+
+                        <tr>
+
+                            <th>No.</th>
+
+                            <th>URL</th>
+
+                            <th>Checks</th>
+
+                            <th>Status</th>
+
+                            <th>HTTPS</th>
+
+                            <th>Last Checked</th>
+
+                            <th>Action</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="duplicateTable">
+
+
+                        <tr>
+
+                            <td colspan="7">
+
+                                <div class="empty">
+
+                                    <i class="fa-solid fa-spinner fa-spin"></i>
+
+                                    Loading duplicate URLs...
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+
+                    </tbody>
+
+
+                </table>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</main>
+
+
+<div class="modal" id="historyModal">
+
+
+    <div class="modal-box">
+
+
+        <div class="modal-header">
+
+            <h3>
+                Verification History
+            </h3>
+
+
+            <button
+                class="close"
+                id="closeModal"
+            >
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+        </div>
+
+
+        <div id="modalContent"></div>
+
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+
+const API =
+    "http://localhost:8080";
+
+
+const userEmail =
+    localStorage.getItem("userEmail");
+
+
+let duplicateRecords = [];
+
+let groupedRecords = [];
+
+
+const duplicateTable =
+    document.getElementById("duplicateTable");
+
+
+const duplicateCount =
+    document.getElementById("duplicateCount");
+
+
+const verificationCount =
+    document.getElementById("verificationCount");
+
+
+const averageCount =
+    document.getElementById("averageCount");
+
+
+const searchInput =
+    document.getElementById("searchInput");
+
+
+const message =
+    document.getElementById("message");
+
+
+function showMessage(text, type) {
+
+    message.textContent = text;
+
+    message.className =
+        "message " + type;
+
+}
+
+
+async function loadDuplicates() {
+
+    try {
+
+        duplicateTable.innerHTML = `
+            <tr>
+                <td colspan="7">
+
+                    <div class="empty">
+
+                        <i class="fa-solid fa-spinner fa-spin"></i>
+
+                        Loading duplicate URLs...
+
+                    </div>
+
+                </td>
+            </tr>
+        `;
+
+
+        const response =
+            await fetch(
+                API + "/api/urls/duplicates"
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Unable to load duplicate URLs"
+            );
+
+        }
+
+
+        duplicateRecords =
+            await response.json();
+
+
+        groupDuplicates();
+
+
+        renderDuplicates();
+
+
+    } catch(error) {
+
+        console.error(error);
+
+
+        duplicateTable.innerHTML = `
+            <tr>
+                <td colspan="7">
+
+                    <div class="empty">
+
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+
+                        Unable to connect to backend.
+
+                    </div>
+
+                </td>
+            </tr>
+        `;
+
+    }
+
+}
+
+
+function groupDuplicates() {
+
+    const groups = {};
+
+
+    duplicateRecords.forEach(function(record) {
+
+        const url =
+            record.url;
+
+
+        if (!groups[url]) {
+
+            groups[url] = [];
+
+        }
+
+
+        groups[url].push(record);
+
+    });
+
+
+    groupedRecords =
+        Object.keys(groups).map(function(url) {
+
+            const records =
+                groups[url];
+
+
+            records.sort(function(a,b) {
+
+                return new Date(b.verifiedAt) -
+                       new Date(a.verifiedAt);
+
+            });
+
+
+            return {
+
+                url: url,
+
+                records: records
+
+            };
+
+        });
+
+
+    duplicateCount.textContent =
+        groupedRecords.length;
+
+
+    verificationCount.textContent =
+        duplicateRecords.length;
+
+
+    if (groupedRecords.length > 0) {
+
+        averageCount.textContent =
+            (
+                duplicateRecords.length /
+                groupedRecords.length
+            ).toFixed(1);
+
+    } else {
+
+        averageCount.textContent = "0";
+
+    }
+
+}
+
+
+function renderDuplicates() {
+
+    const search =
+        searchInput.value
+            .trim()
+            .toLowerCase();
+
+
+    let records =
+        groupedRecords;
+
+
+    if (search) {
+
+        records =
+            records.filter(function(group) {
+
+                return group.url
+                    .toLowerCase()
+                    .includes(search);
+
+            });
+
+    }
+
+
+    if (records.length === 0) {
+
+        duplicateTable.innerHTML = `
+            <tr>
+                <td colspan="7">
+
+                    <div class="empty">
+
+                        <i class="fa-solid fa-inbox"></i>
+
+                        No duplicate URLs found.
+
+                    </div>
+
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+
+    duplicateTable.innerHTML =
+        records.map(function(group,index) {
+
+
+            const latest =
+                group.records[0];
+
+
+            const reachable =
+                latest.reachable === 1;
+
+
+            const https =
+                latest.https === 1;
+
+
+            return `
+
+                <tr>
+
+                    <td>
+                        ${index + 1}
+                    </td>
+
+
+                    <td>
+
+                        <div
+                            class="url"
+                            title="${group.url}"
+                        >
+
+                            <i class="fa-solid fa-link"></i>
+
+                            ${group.url}
+
+                        </div>
+
+                    </td>
+
+
+                    <td>
+
+                        <span class="badge badge-warning">
+
+                            ${group.records.length}
+                            checks
+
+                        </span>
+
+                    </td>
+
+
+                    <td>
+
+                        ${
+                            reachable
+
+                            ? `
+                                <span class="badge badge-success">
+                                    Reachable
+                                </span>
+                              `
+
+                            : `
+                                <span class="badge badge-warning">
+                                    Unreachable
+                                </span>
+                              `
+                        }
+
+                    </td>
+
+
+                    <td>
+
+                        ${
+                            https
+                            ? "Yes"
+                            : "No"
+                        }
+
+                    </td>
+
+
+                    <td>
+
+                        ${
+                            latest.verifiedAt
+                            ? new Date(
+                                latest.verifiedAt
+                              ).toLocaleString()
+                            : "—"
+                        }
+
+                    </td>
+
+
+                    <td>
+
+                        <button
+                            class="btn-secondary"
+                            onclick="viewHistory(
+                                ${index}
+                            )"
+                        >
+
+                            <i class="fa-solid fa-eye"></i>
+
+                            View
+
+                        </button>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        }).join("");
+
+}
+
+
+async function viewHistory(index) {
+
+    const group =
+        groupedRecords[index];
+
+
+    if (!group) {
+        return;
+    }
+
+
+    const modal =
+        document.getElementById("historyModal");
+
+
+    const modalContent =
+        document.getElementById("modalContent");
+
+
+    modalContent.innerHTML = `
+
+        <h4 style="margin-bottom:15px;">
+            ${group.url}
+        </h4>
+
+        <p style="
+            color:#64748b;
+            font-size:12px;
+            margin-bottom:15px;
+        ">
+            Total checks:
+            ${group.records.length}
+        </p>
+
+    `;
+
+
+    group.records.forEach(function(record,index) {
+
+        const item =
+            document.createElement("div");
+
+
+        item.className =
+            "history-item";
+
+
+        item.innerHTML = `
+
+            <div>
+                <strong>
+                    Check ${index + 1}
+                </strong>
+            </div>
+
+            <div>
+                Status:
+                ${record.statusCode ?? "—"}
+            </div>
+
+            <div>
+                Reachable:
+                ${
+                    record.reachable === 1
+                    ? "Yes"
+                    : "No"
+                }
+            </div>
+
+            <div>
+                HTTPS:
+                ${
+                    record.https === 1
+                    ? "Yes"
+                    : "No"
+                }
+            </div>
+
+            <div>
+                Response Time:
+                ${
+                    record.responseTime !== null
+                    ? record.responseTime + " ms"
+                    : "—"
+                }
+            </div>
+
+            <div>
+                Verified:
+                ${
+                    record.verifiedAt
+                    ? new Date(
+                        record.verifiedAt
+                      ).toLocaleString()
+                    : "—"
+                }
+            </div>
+
+        `;
+
+
+        modalContent.appendChild(item);
+
+    });
+
+
+    modal.classList.add("show");
+
+}
+
+
+async function verifyAgain(url) {
+
+    if (!userEmail) {
+
+        showMessage(
+            "Please login first.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+
+                API +
+                "/api/urls/verify?url=" +
+                encodeURIComponent(url) +
+                "&email=" +
+                encodeURIComponent(userEmail),
+
+                {
+                    method: "POST"
+                }
+
+            );
+
+
+        const result =
+            await response.text();
+
+
+        if (!response.ok) {
+
+            throw new Error(result);
+
+        }
+
+
+        showMessage(
+            result,
+            "success"
+        );
+
+
+        await loadDuplicates();
+
+
+    } catch(error) {
+
+        showMessage(
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+searchInput.addEventListener(
+    "input",
+    renderDuplicates
+);
+
+
+document
+    .getElementById("refreshButton")
+    .addEventListener(
+        "click",
+        loadDuplicates
+    );
+
+
+document
+    .getElementById("closeModal")
+    .addEventListener(
+        "click",
+        function() {
+
+            document
+                .getElementById("historyModal")
+                .classList.remove("show");
+
+        }
+    );
+
+
+document
+    .getElementById("historyModal")
+    .addEventListener(
+        "click",
+        function(event) {
+
+            if (
+                event.target ===
+                document.getElementById("historyModal")
+            ) {
+
+                document
+                    .getElementById("historyModal")
+                    .classList.remove("show");
+
+            }
+
+        }
+    );
+
+
+document
+    .getElementById("logout")
+    .addEventListener(
+        "click",
+        function() {
+
+            localStorage.removeItem(
+                "userEmail"
+            );
+
+        }
+    );
+
+
+loadDuplicates();
+
+</script>
+
+</body>
+
+</html>

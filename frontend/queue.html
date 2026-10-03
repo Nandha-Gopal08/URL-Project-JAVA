@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>URL Queue</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            color: #1e293b;
+        }
+
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background: #101828;
+            position: fixed;
+            left: 0;
+            top: 0;
+            color: white;
+            padding: 20px 12px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            margin-bottom: 25px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #2563eb, #06b6d4);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-text {
+            font-weight: bold;
+        }
+
+        .logo-text span {
+            display: block;
+            color: #94a3b8;
+            font-size: 11px;
+            font-weight: normal;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            margin-bottom: 5px;
+            color: #cbd5e1;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .nav-item:hover {
+            background: #1e293b;
+            color: white;
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, #2563eb, #06b6d4);
+            color: white;
+        }
+
+        .main {
+            margin-left: 250px;
+            min-height: 100vh;
+        }
+
+        .topbar {
+            height: 65px;
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            padding: 0 25px;
+            font-weight: bold;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .page-title {
+            margin-bottom: 25px;
+        }
+
+        .page-title h2 {
+            font-size: 25px;
+            margin-bottom: 6px;
+        }
+
+        .page-title p {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 22px;
+            margin-bottom: 22px;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.05);
+        }
+
+        .card-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .card-subtitle {
+            color: #64748b;
+            font-size: 12px;
+            margin-bottom: 18px;
+        }
+
+        .add-form {
+            display: flex;
+            gap: 12px;
+        }
+
+        .add-form input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #dbe1e8;
+            border-radius: 8px;
+            outline: none;
+            font-size: 13px;
+        }
+
+        .add-form input:focus {
+            border-color: #2563eb;
+        }
+
+        button {
+            border: none;
+            border-radius: 8px;
+            padding: 11px 16px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2563eb, #06b6d4);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #1e293b;
+            border: 1px solid #e2e8f0;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .message {
+            margin-top: 12px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .success {
+            color: #16a34a;
+        }
+
+        .error {
+            color: #dc2626;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .queue-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .queue-count {
+            background: #eff6ff;
+            color: #2563eb;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+        }
+
+        th {
+            text-align: left;
+            padding: 13px 15px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #64748b;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 14px 15px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 13px;
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        .url {
+            max-width: 400px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .url i {
+            color: #2563eb;
+            margin-right: 7px;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 50px;
+            color: #64748b;
+        }
+
+        .empty i {
+            display: block;
+            font-size: 30px;
+            margin-bottom: 12px;
+            color: #cbd5e1;
+        }
+
+        @media(max-width: 850px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .content {
+                padding: 18px;
+            }
+
+            .add-form {
+                flex-direction: column;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <div class="logo-icon">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+
+            <div class="logo-text">
+                URL Verification
+                <span>System</span>
+            </div>
+
+        </div>
+
+
+        <a href="dashboard.html" class="nav-item">
+            <i class="fa-solid fa-gauge-high"></i>
+            Dashboard
+        </a>
+
+        <a href="verify.html" class="nav-item">
+            <i class="fa-solid fa-link"></i>
+            Verify URL
+        </a>
+
+        <a href="queue.html" class="nav-item active">
+            <i class="fa-solid fa-list-check"></i>
+            URL Queue
+        </a>
+
+        <a href="history.html" class="nav-item">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            Verification History
+        </a>
+
+        <a href="duplicates.html" class="nav-item">
+            <i class="fa-solid fa-clone"></i>
+            Duplicate URLs
+        </a>
+
+        <a href="statistics.html" class="nav-item">
+            <i class="fa-solid fa-chart-column"></i>
+            Statistics
+        </a>
+
+        <br>
+
+        <a href="settings.html" class="nav-item">
+            <i class="fa-solid fa-gear"></i>
+            Settings
+        </a>
+
+        <a href="login.html" class="nav-item" id="logout">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Logout
+        </a>
+
+    </aside>
+
+
+    <main class="main">
+
+        <div class="topbar">
+            URL Queue
+        </div>
+
+
+        <div class="content">
+
+            <div class="page-title">
+
+                <h2>URL Queue</h2>
+
+                <p>
+                    Add URLs to the queue and process them later.
+                </p>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="card-title">
+                    Add URL to Queue
+                </div>
+
+                <div class="card-subtitle">
+                    The URL will be stored in Oracle database.
+                </div>
+
+
+                <div class="add-form">
+
+                    <input
+                        type="text"
+                        id="urlInput"
+                        placeholder="https://example.com"
+                    >
+
+                    <button
+                        class="btn-primary"
+                        id="addButton"
+                    >
+                        <i class="fa-solid fa-plus"></i>
+                        Add to Queue
+                    </button>
+
+                </div>
+
+
+                <div id="message" class="message"></div>
+
+            </div>
+
+
+            <div class="actions">
+
+                <button
+                    class="btn-primary"
+                    id="processNext"
+                >
+                    <i class="fa-solid fa-play"></i>
+                    Process Next
+                </button>
+
+
+                <button
+                    class="btn-secondary"
+                    id="processAll"
+                >
+                    <i class="fa-solid fa-forward"></i>
+                    Process All
+                </button>
+
+
+                <button
+                    class="btn-secondary"
+                    id="refresh"
+                >
+                    <i class="fa-solid fa-rotate"></i>
+                    Refresh
+                </button>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="queue-header">
+
+                    <div>
+
+                        <div class="card-title">
+                            Pending URLs
+                        </div>
+
+                        <div class="card-subtitle">
+                            URLs currently waiting for verification.
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        class="queue-count"
+                        id="queueCount"
+                    >
+                        0 URLs
+                    </div>
+
+                </div>
+
+
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+                                <th>No.</th>
+                                <th>URL</th>
+                                <th>User</th>
+                                <th>Added At</th>
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="queueTable">
+
+                            <tr>
+
+                                <td colspan="4">
+
+                                    <div class="empty">
+                                        <i class="fa-solid fa-spinner fa-spin"></i>
+                                        Loading queue...
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+<script>
+
+const API = "http://localhost:8080";
+
+const userEmail =
+    localStorage.getItem("userEmail");
+
+
+const urlInput =
+    document.getElementById("urlInput");
+
+const addButton =
+    document.getElementById("addButton");
+
+const processNextButton =
+    document.getElementById("processNext");
+
+const processAllButton =
+    document.getElementById("processAll");
+
+const refreshButton =
+    document.getElementById("refresh");
+
+const queueTable =
+    document.getElementById("queueTable");
+
+const queueCount =
+    document.getElementById("queueCount");
+
+const message =
+    document.getElementById("message");
+
+
+function showMessage(text, type) {
+
+    message.textContent = text;
+
+    message.className =
+        "message " + type;
+
+}
+
+
+async function loadQueue() {
+
+    try {
+
+        const response = await fetch(
+            API + "/api/urls/queue"
+        );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Unable to load queue"
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        queueCount.textContent =
+            data.length + " URLs";
+
+
+        if (data.length === 0) {
+
+            queueTable.innerHTML = `
+                <tr>
+                    <td colspan="4">
+
+                        <div class="empty">
+
+                            <i class="fa-solid fa-inbox"></i>
+
+                            No URLs in the queue.
+
+                        </div>
+
+                    </td>
+                </tr>
+            `;
+
+            return;
+
+        }
+
+
+        queueTable.innerHTML =
+            data.map(function(item, index) {
+
+                const email =
+                    item.user
+                    ? item.user.email
+                    : "Unknown";
+
+
+                const date =
+                    item.addedAt
+                    ? new Date(
+                        item.addedAt
+                    ).toLocaleString()
+                    : "—";
+
+
+                return `
+
+                    <tr>
+
+                        <td>
+                            ${index + 1}
+                        </td>
+
+                        <td>
+
+                            <div
+                                class="url"
+                                title="${item.url}"
+                            >
+
+                                <i class="fa-solid fa-link"></i>
+
+                                ${item.url}
+
+                            </div>
+
+                        </td>
+
+                        <td>
+                            ${email}
+                        </td>
+
+                        <td>
+                            ${date}
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }).join("");
+
+
+    } catch(error) {
+
+        console.error(error);
+
+        queueTable.innerHTML = `
+            <tr>
+                <td colspan="4">
+
+                    <div class="empty">
+
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+
+                        Unable to connect to backend.
+
+                        <br><br>
+
+                        Make sure Spring Boot is running.
+
+                    </div>
+
+                </td>
+            </tr>
+        `;
+
+        queueCount.textContent = "0 URLs";
+
+    }
+
+}
+
+
+async function addToQueue() {
+
+    const url =
+        urlInput.value.trim();
+
+
+    if (url === "") {
+
+        showMessage(
+            "Please enter a URL.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if (!userEmail) {
+
+        showMessage(
+            "Please login first.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        addButton.disabled = true;
+
+
+        const response = await fetch(
+
+            API +
+            "/api/urls/queue?url=" +
+            encodeURIComponent(url) +
+            "&email=" +
+            encodeURIComponent(userEmail),
+
+            {
+                method: "POST"
+            }
+
+        );
+
+
+        const result =
+            await response.text();
+
+
+        if (!response.ok) {
+
+            throw new Error(result);
+
+        }
+
+
+        showMessage(
+            result,
+            "success"
+        );
+
+
+        urlInput.value = "";
+
+
+        await loadQueue();
+
+
+    } catch(error) {
+
+        console.error(error);
+
+        showMessage(
+            error.message,
+            "error"
+        );
+
+    } finally {
+
+        addButton.disabled = false;
+
+    }
+
+}
+
+
+async function processNext() {
+
+    try {
+
+        processNextButton.disabled = true;
+
+
+        const response = await fetch(
+
+            API +
+            "/api/urls/queue/process-next",
+
+            {
+                method: "POST"
+            }
+
+        );
+
+
+        const result =
+            await response.text();
+
+
+        if (!response.ok) {
+
+            throw new Error(result);
+
+        }
+
+
+        showMessage(
+            result,
+            "success"
+        );
+
+
+        await loadQueue();
+
+
+    } catch(error) {
+
+        showMessage(
+            error.message,
+            "error"
+        );
+
+    } finally {
+
+        processNextButton.disabled = false;
+
+    }
+
+}
+
+
+async function processAll() {
+
+    if (!confirm(
+        "Do you want to process all URLs?"
+    )) {
+
+        return;
+
+    }
+
+
+    try {
+
+        processAllButton.disabled = true;
+
+
+        const response = await fetch(
+
+            API +
+            "/api/urls/queue/process-all",
+
+            {
+                method: "POST"
+            }
+
+        );
+
+
+        const result =
+            await response.text();
+
+
+        if (!response.ok) {
+
+            throw new Error(result);
+
+        }
+
+
+        showMessage(
+            result,
+            "success"
+        );
+
+
+        await loadQueue();
+
+
+    } catch(error) {
+
+        showMessage(
+            error.message,
+            "error"
+        );
+
+    } finally {
+
+        processAllButton.disabled = false;
+
+    }
+
+}
+
+
+addButton.addEventListener(
+    "click",
+    addToQueue
+);
+
+
+processNextButton.addEventListener(
+    "click",
+    processNext
+);
+
+
+processAllButton.addEventListener(
+    "click",
+    processAll
+);
+
+
+refreshButton.addEventListener(
+    "click",
+    loadQueue
+);
+
+
+urlInput.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (event.key === "Enter") {
+
+            addToQueue();
+
+        }
+
+    }
+);
+
+
+document
+    .getElementById("logout")
+    .addEventListener(
+        "click",
+        function() {
+
+            localStorage.removeItem(
+                "userEmail"
+            );
+
+        }
+    );
+
+
+loadQueue();
+
+</script>
+
+</body>
+</html>

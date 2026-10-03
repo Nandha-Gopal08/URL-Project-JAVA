@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Create Account | URL Verification System</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+
+        :root {
+            --color-primary: #2563eb;
+            --color-cyan: #06b6d4;
+            --color-border: #e2e8f0;
+            --color-text-main: #1e293b;
+            --color-text-muted: #64748b;
+            --color-error: #dc2626;
+            --color-success: #16a34a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: linear-gradient(
+                160deg,
+                #f4f6f9 0%,
+                #eaf1fb 100%
+            );
+            color: var(--color-text-main);
+            min-height: 100vh;
+        }
+
+        .page-wrapper {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px 16px;
+        }
+
+        .signup-card {
+            width: 100%;
+            max-width: 420px;
+            background: white;
+            border-radius: 18px;
+            padding: 40px 36px 28px;
+            border: 1px solid var(--color-border);
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+        }
+
+        .logo-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 18px;
+        }
+
+        .logo-icon {
+            width: 68px;
+            height: 68px;
+            border-radius: 18px;
+            background: linear-gradient(
+                135deg,
+                var(--color-primary),
+                var(--color-cyan)
+            );
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icon i {
+            font-size: 30px;
+            color: white;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 26px;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--color-text-muted);
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        .input-group {
+            margin-bottom: 17px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 13.5px;
+            font-weight: 600;
+            margin-bottom: 7px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 12px 14px 12px 40px;
+            font-size: 14.5px;
+            border: 1.5px solid var(--color-border);
+            border-radius: 10px;
+            background: #f9fafb;
+            outline: none;
+        }
+
+        .input-wrapper input:focus {
+            border-color: var(--color-primary);
+            background: white;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 14px;
+            top: 14px;
+            color: #94a3b8;
+        }
+
+        .field-error {
+            display: block;
+            min-height: 16px;
+            font-size: 12px;
+            color: var(--color-error);
+            margin-top: 5px;
+        }
+
+        .input-error {
+            border-color: var(--color-error) !important;
+            background: #fef2f2 !important;
+        }
+
+        .form-alert {
+            display: none;
+            padding: 10px 14px;
+            border-radius: 8px;
+            margin-bottom: 18px;
+            font-size: 13px;
+        }
+
+        .form-alert.show {
+            display: block;
+        }
+
+        .form-alert.error {
+            color: var(--color-error);
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+        }
+
+        .form-alert.success {
+            color: var(--color-success);
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+        }
+
+        .signup-btn {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            background: linear-gradient(
+                135deg,
+                var(--color-primary),
+                var(--color-cyan)
+            );
+        }
+
+        .signup-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .signup-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .login-text {
+            text-align: center;
+            margin-top: 18px;
+            font-size: 13.5px;
+            color: var(--color-text-muted);
+        }
+
+        .login-text a {
+            color: var(--color-primary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .login-text a:hover {
+            text-decoration: underline;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="page-wrapper">
+
+    <div class="signup-card">
+
+        <div class="logo-wrapper">
+
+            <div class="logo-icon">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+
+        </div>
+
+
+        <h1 class="title">
+            Create Account
+        </h1>
+
+
+        <p class="subtitle">
+            Create your URL Verification System account
+        </p>
+
+
+        <div id="formAlert"
+             class="form-alert">
+        </div>
+
+
+        <form id="signupForm">
+
+
+            <!-- NAME -->
+
+            <div class="input-group">
+
+                <label for="name">
+                    Full Name
+                </label>
+
+                <div class="input-wrapper">
+
+                    <i class="fa-solid fa-user"></i>
+
+                    <input
+                        type="text"
+                        id="name"
+                        placeholder="Enter your name"
+                    >
+
+                </div>
+
+                <span
+                    id="nameError"
+                    class="field-error">
+                </span>
+
+            </div>
+
+
+            <!-- EMAIL -->
+
+            <div class="input-group">
+
+                <label for="email">
+                    Email Address
+                </label>
+
+                <div class="input-wrapper">
+
+                    <i class="fa-solid fa-envelope"></i>
+
+                    <input
+                        type="email"
+                        id="email"
+                        placeholder="you@example.com"
+                    >
+
+                </div>
+
+                <span
+                    id="emailError"
+                    class="field-error">
+                </span>
+
+            </div>
+
+
+            <!-- PASSWORD -->
+
+            <div class="input-group">
+
+                <label for="password">
+                    Password
+                </label>
+
+                <div class="input-wrapper">
+
+                    <i class="fa-solid fa-lock"></i>
+
+                    <input
+                        type="password"
+                        id="password"
+                        placeholder="Enter your password"
+                    >
+
+                </div>
+
+                <span
+                    id="passwordError"
+                    class="field-error">
+                </span>
+
+            </div>
+
+
+            <!-- CONFIRM PASSWORD -->
+
+            <div class="input-group">
+
+                <label for="confirmPassword">
+                    Confirm Password
+                </label>
+
+                <div class="input-wrapper">
+
+                    <i class="fa-solid fa-lock"></i>
+
+                    <input
+                        type="password"
+                        id="confirmPassword"
+                        placeholder="Confirm your password"
+                    >
+
+                </div>
+
+                <span
+                    id="confirmPasswordError"
+                    class="field-error">
+                </span>
+
+            </div>
+
+
+            <!-- BUTTON -->
+
+            <button
+                type="submit"
+                class="signup-btn"
+                id="signupBtn">
+
+                Create Account
+
+            </button>
+
+
+        </form>
+
+
+        <!-- LOGIN LINK -->
+
+        <p class="login-text">
+
+            Already have an account?
+
+            <a href="login.html">
+                Login
+            </a>
+
+        </p>
+
+    </div>
+
+</div>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const signupForm =
+        document.getElementById("signupForm");
+
+    const nameInput =
+        document.getElementById("name");
+
+    const emailInput =
+        document.getElementById("email");
+
+    const passwordInput =
+        document.getElementById("password");
+
+    const confirmPasswordInput =
+        document.getElementById("confirmPassword");
+
+
+    const nameError =
+        document.getElementById("nameError");
+
+    const emailError =
+        document.getElementById("emailError");
+
+    const passwordError =
+        document.getElementById("passwordError");
+
+    const confirmPasswordError =
+        document.getElementById("confirmPasswordError");
+
+
+    const formAlert =
+        document.getElementById("formAlert");
+
+    const signupBtn =
+        document.getElementById("signupBtn");
+
+
+    function showAlert(message, type) {
+
+        formAlert.textContent = message;
+
+        formAlert.className =
+            "form-alert show " + type;
+    }
+
+
+    function clearErrors() {
+
+        nameError.textContent = "";
+        emailError.textContent = "";
+        passwordError.textContent = "";
+        confirmPasswordError.textContent = "";
+
+        nameInput.classList.remove("input-error");
+        emailInput.classList.remove("input-error");
+        passwordInput.classList.remove("input-error");
+        confirmPasswordInput.classList.remove("input-error");
+    }
+
+
+    function isValidEmail(email) {
+
+        const pattern =
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        return pattern.test(email);
+    }
+
+
+    signupForm.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+            clearErrors();
+
+            formAlert.className =
+                "form-alert";
+
+            formAlert.textContent = "";
+
+
+            const name =
+                nameInput.value.trim();
+
+            const email =
+                emailInput.value.trim();
+
+            const password =
+                passwordInput.value.trim();
+
+            const confirmPassword =
+                confirmPasswordInput.value.trim();
+
+
+            let valid = true;
+
+
+            /* NAME */
+
+            if (name === "") {
+
+                nameError.textContent =
+                    "Please enter your name.";
+
+                nameInput.classList.add(
+                    "input-error"
+                );
+
+                valid = false;
+            }
+
+
+            /* EMAIL */
+
+            if (email === "") {
+
+                emailError.textContent =
+                    "Please enter your email.";
+
+                emailInput.classList.add(
+                    "input-error"
+                );
+
+                valid = false;
+
+            }
+            else if (!isValidEmail(email)) {
+
+                emailError.textContent =
+                    "Please enter a valid email.";
+
+                emailInput.classList.add(
+                    "input-error"
+                );
+
+                valid = false;
+            }
+
+
+            /* PASSWORD */
+
+            if (password === "") {
+
+                passwordError.textContent =
+                    "Please enter a password.";
+
+                passwordInput.classList.add(
+                    "input-error"
+                );
+
+                valid = false;
+
+            }
+            else if (password.length < 6) {
+
+                passwordError.textContent =
+                    "Password must be at least 6 characters.";
+
+                passwordInput.classList.add(
+                    "input-error"
+                );
+
+                valid = false;
+            }
+
+
+            /* CONFIRM PASSWORD */
+
+            if (confirmPassword === "") {
+
+                confirmPasswordError.textContent =
+                    "Please confirm your password.";
+
+                confirmPasswordInput.classList.add(
+                    "input-error"
+                );
+
+                valid = false;
+
+            }
+            else if (password !== confirmPassword) {
+
+                confirmPasswordError.textContent =
+                    "Passwords do not match.";
+
+                confirmPasswordInput.classList.add(
+                    "input-error"
+                );
+
+                valid = false;
+            }
+
+
+            if (!valid) {
+
+                showAlert(
+                    "Please fix the highlighted fields.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            /* DISABLE BUTTON */
+
+            signupBtn.disabled = true;
+
+            signupBtn.textContent =
+                "Creating Account...";
+
+
+            try {
+
+                /* SEND DATA TO SPRING BOOT */
+
+                const response = await fetch(
+                    "http://localhost:8080/api/users/register",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            name: name,
+                            email: email,
+                            password: password
+                        })
+                    }
+                );
+
+
+                const result =
+                    await response.text();
+
+
+                /* SUCCESS */
+
+                if (
+                    result ===
+                    "Registration successful"
+                ) {
+
+                    showAlert(
+                        "Account created successfully! Redirecting to login...",
+                        "success"
+                    );
+
+
+                    setTimeout(function () {
+
+                        window.location.href =
+                            "login.html";
+
+                    }, 1500);
+
+
+                }
+
+                /* ERROR */
+
+                else {
+
+                    showAlert(
+                        result,
+                        "error"
+                    );
+
+
+                    signupBtn.disabled = false;
+
+                    signupBtn.textContent =
+                        "Create Account";
+                }
+
+
+            }
+
+            catch (error) {
+
+                console.error(error);
+
+
+                showAlert(
+                    "Unable to connect to the server. Please make sure the backend is running.",
+                    "error"
+                );
+
+
+                signupBtn.disabled = false;
+
+                signupBtn.textContent =
+                    "Create Account";
+            }
+
+        }
+    );
+
+});
+
+</script>
+
+</body>
+
+</html>

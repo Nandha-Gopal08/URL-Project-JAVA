@@ -1,0 +1,1760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Verification History | URL Verification System</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+:root {
+    --primary: #2563eb;
+    --cyan: #06b6d4;
+    --bg: #f4f6f9;
+    --white: #ffffff;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --success: #16a34a;
+    --danger: #dc2626;
+    --warning: #d97706;
+    --sidebar-width: 250px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+}
+
+.app-wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar {
+    width: var(--sidebar-width);
+    background: #101828;
+    color: #cbd5e1;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+}
+
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 22px 20px;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.logo-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(135deg,var(--primary),var(--cyan));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.logo-text {
+    color: white;
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.logo-text span {
+    display: block;
+    color: #94a3b8;
+    font-size: 11px;
+    font-weight: 400;
+}
+
+.sidebar-nav {
+    flex: 1;
+    padding: 14px 12px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    border-radius: 8px;
+    color: #cbd5e1;
+    text-decoration: none;
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.nav-item i {
+    width: 18px;
+    text-align: center;
+}
+
+.nav-item:hover {
+    background: rgba(255,255,255,.06);
+    color: white;
+}
+
+.nav-item.active {
+    background: linear-gradient(135deg,var(--primary),var(--cyan));
+    color: white;
+}
+
+.nav-divider {
+    height: 1px;
+    background: rgba(255,255,255,.08);
+    margin: 12px 6px;
+}
+
+.sidebar-footer {
+    padding: 14px 12px 20px;
+}
+
+/* MAIN */
+
+.main-content {
+    margin-left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
+    min-height: 100vh;
+}
+
+.topbar {
+    height: 64px;
+    background: white;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 26px;
+}
+
+.topbar-title {
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.menu-toggle {
+    display: none;
+    border: none;
+    background: none;
+    font-size: 20px;
+    margin-right: 15px;
+}
+
+.page-content {
+    padding: 26px;
+}
+
+.page-header {
+    margin-bottom: 22px;
+}
+
+.page-header h2 {
+    font-size: 23px;
+    margin-bottom: 5px;
+}
+
+.page-header p {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+/* PANEL */
+
+.panel {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px;
+    margin-bottom: 22px;
+    box-shadow: 0 6px 20px rgba(15,23,42,.06);
+}
+
+.panel-title {
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.panel-subtitle {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 4px;
+    margin-bottom: 18px;
+}
+
+.filters-grid {
+    display: grid;
+    grid-template-columns: 2fr repeat(4,1fr) 1fr;
+    gap: 12px;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.filter-group label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+}
+
+.filter-group input,
+.filter-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #f9fafb;
+    outline: none;
+    font-size: 13px;
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+    border-color: var(--primary);
+    background: white;
+}
+
+.search-wrapper {
+    position: relative;
+}
+
+.search-wrapper i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+}
+
+.search-wrapper input {
+    padding-left: 34px;
+}
+
+/* BUTTON */
+
+.btn {
+    border: none;
+    border-radius: 8px;
+    padding: 9px 14px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg,var(--primary),var(--cyan));
+    color: white;
+}
+
+.btn-secondary {
+    background: #f1f5f9;
+    border: 1px solid var(--border);
+    color: var(--text);
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+/* RESULTS */
+
+.results-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+/* TABLE */
+
+.table-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(15,23,42,.06);
+}
+
+.table-header {
+    padding: 20px 22px 5px;
+}
+
+.table-scroll {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    min-width: 1000px;
+    border-collapse: collapse;
+}
+
+thead th {
+    text-align: left;
+    padding: 12px 18px;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+}
+
+tbody td {
+    padding: 13px 18px;
+    font-size: 13px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+tbody tr:hover {
+    background: #f8fafc;
+}
+
+.url-cell {
+    max-width: 250px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.url-cell i {
+    color: var(--primary);
+}
+
+.url-cell span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 9px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.badge-success {
+    background: #f0fdf4;
+    color: var(--success);
+}
+
+.badge-danger {
+    background: #fef2f2;
+    color: var(--danger);
+}
+
+.badge-warning {
+    background: #fffbeb;
+    color: var(--warning);
+}
+
+.https-yes {
+    color: var(--success);
+    font-weight: 700;
+}
+
+.https-no {
+    color: var(--danger);
+    font-weight: 700;
+}
+
+.empty-note {
+    text-align: center;
+    padding: 45px 20px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.empty-note i {
+    display: block;
+    font-size: 28px;
+    margin-bottom: 10px;
+    color: #cbd5e1;
+}
+
+/* MODAL */
+
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15,23,42,.55);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal-overlay.show {
+    display: flex;
+}
+
+.modal-box {
+    background: white;
+    width: 100%;
+    max-width: 520px;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 20px 50px rgba(0,0,0,.25);
+}
+
+.modal-box h3 {
+    margin-bottom: 18px;
+    font-size: 17px;
+    word-break: break-word;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.detail-item {
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.detail-label {
+    color: var(--muted);
+    font-size: 10px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.detail-value {
+    font-size: 13px;
+    font-weight: 600;
+    word-break: break-word;
+}
+
+.modal-footer {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* MOBILE */
+
+@media (max-width: 1150px) {
+    .filters-grid {
+        grid-template-columns: repeat(3,1fr);
+    }
+}
+
+@media (max-width: 850px) {
+
+    .sidebar {
+        transform: translateX(-100%);
+        transition: .25s;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .menu-toggle {
+        display: block;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .page-content {
+        padding: 16px;
+    }
+
+    .filters-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .detail-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 420px) {
+    .filters-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app-wrapper">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar" id="sidebar">
+
+        <div class="sidebar-logo">
+
+            <div class="logo-icon">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+
+            <div class="logo-text">
+                URL Verification
+                <span>System</span>
+            </div>
+
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <a href="dashboard.html" class="nav-item">
+                <i class="fa-solid fa-gauge-high"></i>
+                Dashboard
+            </a>
+
+            <a href="verify.html" class="nav-item">
+                <i class="fa-solid fa-link"></i>
+                Verify URL
+            </a>
+
+            <a href="queue.html" class="nav-item">
+                <i class="fa-solid fa-list-check"></i>
+                URL Queue
+            </a>
+
+            <a href="history.html" class="nav-item active">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                Verification History
+            </a>
+
+            <a href="duplicates.html" class="nav-item">
+                <i class="fa-solid fa-clone"></i>
+                Duplicate URLs
+            </a>
+
+            <a href="statistics.html" class="nav-item">
+                <i class="fa-solid fa-chart-column"></i>
+                Statistics
+            </a>
+
+            <div class="nav-divider"></div>
+
+            <a href="settings.html" class="nav-item">
+                <i class="fa-solid fa-gear"></i>
+                Settings
+            </a>
+
+        </nav>
+
+        <div class="sidebar-footer">
+
+            <a href="login.html" class="nav-item" id="logoutLink">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                Logout
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main-content">
+
+        <header class="topbar">
+
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <div class="topbar-title">
+                Verification History
+            </div>
+
+        </header>
+
+
+        <section class="page-content">
+
+            <div class="page-header">
+
+                <h2>Verification History</h2>
+
+                <p>
+                    Browse, search, and filter your URL verification records.
+                </p>
+
+            </div>
+
+
+            <!-- FILTERS -->
+
+            <div class="panel">
+
+                <div class="panel-title">
+                    Search & Filter
+                </div>
+
+                <div class="panel-subtitle">
+                    Filter records retrieved from the Oracle database.
+                </div>
+
+
+                <div class="filters-grid">
+
+                    <div class="filter-group">
+
+                        <label>Search URL</label>
+
+                        <div class="search-wrapper">
+
+                            <i class="fa-solid fa-magnifying-glass"></i>
+
+                            <input
+                                type="text"
+                                id="searchInput"
+                                placeholder="Search by URL..."
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="filter-group">
+
+                        <label>Status</label>
+
+                        <select id="statusFilter">
+
+                            <option value="all">
+                                All
+                            </option>
+
+                            <option value="reachable">
+                                Reachable
+                            </option>
+
+                            <option value="unreachable">
+                                Unreachable
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="filter-group">
+
+                        <label>Duplicate</label>
+
+                        <select id="duplicateFilter">
+
+                            <option value="all">
+                                All
+                            </option>
+
+                            <option value="yes">
+                                Duplicate
+                            </option>
+
+                            <option value="no">
+                                Not Duplicate
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="filter-group">
+
+                        <label>HTTPS</label>
+
+                        <select id="httpsFilter">
+
+                            <option value="all">
+                                All
+                            </option>
+
+                            <option value="yes">
+                                HTTPS
+                            </option>
+
+                            <option value="no">
+                                HTTP
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="filter-group">
+
+                        <label>Date</label>
+
+                        <input
+                            type="date"
+                            id="dateFilter"
+                        >
+
+                    </div>
+
+
+                    <div class="filter-group">
+
+                        <label>Sort</label>
+
+                        <select id="sortSelect">
+
+                            <option value="date-desc">
+                                Newest
+                            </option>
+
+                            <option value="date-asc">
+                                Oldest
+                            </option>
+
+                            <option value="response-asc">
+                                Fastest
+                            </option>
+
+                            <option value="response-desc">
+                                Slowest
+                            </option>
+
+                            <option value="url-asc">
+                                URL A-Z
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <div class="results-summary">
+
+                    <span id="resultsCount">
+                        Showing 0 of 0 records
+                    </span>
+
+                    <button
+                        class="btn btn-secondary"
+                        id="resetFiltersBtn"
+                    >
+                        <i class="fa-solid fa-rotate-left"></i>
+                        Reset Filters
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- TABLE -->
+
+            <div class="table-card">
+
+                <div class="table-header">
+
+                    <div class="panel-title">
+                        All Verification Records
+                    </div>
+
+                    <div class="panel-subtitle">
+                        Data loaded from Oracle through Spring Boot.
+                    </div>
+
+                </div>
+
+
+                <div class="table-scroll">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>No.</th>
+
+                                <th>URL</th>
+
+                                <th>Status</th>
+
+                                <th>Reachable</th>
+
+                                <th>HTTPS</th>
+
+                                <th>Type</th>
+
+                                <th>Response Time</th>
+
+                                <th>Verified At</th>
+
+                                <th>Action</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="historyTableBody">
+
+                            <tr>
+
+                                <td colspan="9">
+
+                                    <div class="empty-note">
+
+                                        <i class="fa-solid fa-spinner fa-spin"></i>
+
+                                        Loading history...
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- DETAIL MODAL -->
+
+<div class="modal-overlay" id="detailModal">
+
+    <div class="modal-box">
+
+        <h3 id="detailUrlTitle">
+            Verification Details
+        </h3>
+
+        <div
+            class="detail-grid"
+            id="detailGrid"
+        ></div>
+
+        <div class="modal-footer">
+
+            <button
+                class="btn btn-primary"
+                id="closeDetailBtn"
+            >
+                Close
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const API = "http://localhost:8080";
+
+let history = [];
+
+
+/* ELEMENTS */
+
+const historyTableBody =
+    document.getElementById("historyTableBody");
+
+const resultsCount =
+    document.getElementById("resultsCount");
+
+const searchInput =
+    document.getElementById("searchInput");
+
+const statusFilter =
+    document.getElementById("statusFilter");
+
+const duplicateFilter =
+    document.getElementById("duplicateFilter");
+
+const httpsFilter =
+    document.getElementById("httpsFilter");
+
+const dateFilter =
+    document.getElementById("dateFilter");
+
+const sortSelect =
+    document.getElementById("sortSelect");
+
+const resetFiltersBtn =
+    document.getElementById("resetFiltersBtn");
+
+const detailModal =
+    document.getElementById("detailModal");
+
+const detailGrid =
+    document.getElementById("detailGrid");
+
+const detailUrlTitle =
+    document.getElementById("detailUrlTitle");
+
+
+/* MOBILE SIDEBAR */
+
+document
+    .getElementById("menuToggle")
+    .addEventListener("click", function () {
+
+        document
+            .getElementById("sidebar")
+            .classList.toggle("open");
+
+    });
+
+
+/* ESCAPE HTML */
+
+function escapeHtml(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+        return "";
+    }
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+/* DATE */
+
+function formatDate(dateString) {
+
+    if (!dateString) {
+        return "—";
+    }
+
+    const date = new Date(dateString);
+
+    if (isNaN(date.getTime())) {
+        return "—";
+    }
+
+    return date.toLocaleString();
+
+}
+
+
+/* LOAD HISTORY */
+
+async function loadHistory() {
+
+    try {
+
+        historyTableBody.innerHTML = `
+            <tr>
+                <td colspan="9">
+                    <div class="empty-note">
+                        <i class="fa-solid fa-spinner fa-spin"></i>
+                        Loading history...
+                    </div>
+                </td>
+            </tr>
+        `;
+
+
+        const response = await fetch(
+            API + "/api/urls/history"
+        );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Server returned " + response.status
+            );
+
+        }
+
+
+        const data = await response.json();
+
+
+        history = data.map(function (record) {
+
+            return {
+
+                id: record.verificationId,
+
+                url: record.url,
+
+                statusCode: record.statusCode,
+
+                reachable:
+                    record.reachable === 1,
+
+                https:
+                    record.https === 1,
+
+                duplicate:
+                    record.duplicate === 1,
+
+                responseTime:
+                    record.responseTime,
+
+                redirected:
+                    record.redirected === 1,
+
+                redirectInfo:
+                    record.redirectInfo,
+
+                message:
+                    record.message,
+
+                verifiedAt:
+                    record.verifiedAt,
+
+                user:
+                    record.user
+
+            };
+
+        });
+
+
+        renderHistory();
+
+
+    } catch (error) {
+
+        console.error(error);
+
+
+        historyTableBody.innerHTML = `
+            <tr>
+                <td colspan="9">
+                    <div class="empty-note">
+
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+
+                        Unable to connect to the server.
+
+                        <br><br>
+
+                        Make sure Spring Boot is running on
+                        <b>http://localhost:8080</b>
+
+                    </div>
+                </td>
+            </tr>
+        `;
+
+        resultsCount.textContent =
+            "Unable to load records";
+
+    }
+
+}
+
+
+/* FILTER */
+
+function getFilteredHistory() {
+
+    let result = [...history];
+
+
+    const search =
+        searchInput.value
+            .trim()
+            .toLowerCase();
+
+
+    if (search) {
+
+        result = result.filter(function (record) {
+
+            return record.url
+                .toLowerCase()
+                .includes(search);
+
+        });
+
+    }
+
+
+    /* STATUS */
+
+    if (
+        statusFilter.value === "reachable"
+    ) {
+
+        result = result.filter(function (record) {
+
+            return record.reachable;
+
+        });
+
+    }
+
+
+    if (
+        statusFilter.value === "unreachable"
+    ) {
+
+        result = result.filter(function (record) {
+
+            return !record.reachable;
+
+        });
+
+    }
+
+
+    /* DUPLICATE */
+
+    if (
+        duplicateFilter.value === "yes"
+    ) {
+
+        result = result.filter(function (record) {
+
+            return record.duplicate;
+
+        });
+
+    }
+
+
+    if (
+        duplicateFilter.value === "no"
+    ) {
+
+        result = result.filter(function (record) {
+
+            return !record.duplicate;
+
+        });
+
+    }
+
+
+    /* HTTPS */
+
+    if (
+        httpsFilter.value === "yes"
+    ) {
+
+        result = result.filter(function (record) {
+
+            return record.https;
+
+        });
+
+    }
+
+
+    if (
+        httpsFilter.value === "no"
+    ) {
+
+        result = result.filter(function (record) {
+
+            return !record.https;
+
+        });
+
+    }
+
+
+    /* DATE */
+
+    if (dateFilter.value) {
+
+        result = result.filter(function (record) {
+
+            if (!record.verifiedAt) {
+                return false;
+            }
+
+            return record.verifiedAt
+                .substring(0,10)
+                === dateFilter.value;
+
+        });
+
+    }
+
+
+    /* SORT */
+
+    result.sort(function (a,b) {
+
+        switch (sortSelect.value) {
+
+            case "date-asc":
+
+                return new Date(a.verifiedAt) -
+                       new Date(b.verifiedAt);
+
+
+            case "response-asc":
+
+                return (
+                    (a.responseTime ?? Infinity) -
+                    (b.responseTime ?? Infinity)
+                );
+
+
+            case "response-desc":
+
+                return (
+                    (b.responseTime ?? -1) -
+                    (a.responseTime ?? -1)
+                );
+
+
+            case "url-asc":
+
+                return a.url.localeCompare(
+                    b.url
+                );
+
+
+            case "date-desc":
+
+            default:
+
+                return new Date(b.verifiedAt) -
+                       new Date(a.verifiedAt);
+
+        }
+
+    });
+
+
+    return result;
+
+}
+
+
+/* RENDER */
+
+function renderHistory() {
+
+    const records =
+        getFilteredHistory();
+
+
+    resultsCount.textContent =
+        `Showing ${records.length} of ${history.length} records`;
+
+
+    if (records.length === 0) {
+
+        historyTableBody.innerHTML = `
+            <tr>
+                <td colspan="9">
+
+                    <div class="empty-note">
+
+                        <i class="fa-solid fa-inbox"></i>
+
+                        No verification records found.
+
+                    </div>
+
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+
+    historyTableBody.innerHTML =
+        records.map(function (record,index) {
+
+
+            let statusBadge;
+
+
+            if (record.reachable) {
+
+                statusBadge = `
+                    <span class="badge badge-success">
+                        <i class="fa-solid fa-circle-check"></i>
+                        Reachable
+                    </span>
+                `;
+
+            } else {
+
+                statusBadge = `
+                    <span class="badge badge-danger">
+                        <i class="fa-solid fa-circle-xmark"></i>
+                        Unreachable
+                    </span>
+                `;
+
+            }
+
+
+            let duplicateBadge;
+
+
+            if (record.duplicate) {
+
+                duplicateBadge = `
+                    <span class="badge badge-warning">
+                        <i class="fa-solid fa-clone"></i>
+                        Duplicate
+                    </span>
+                `;
+
+            } else {
+
+                duplicateBadge = `
+                    <span class="badge badge-success">
+                        Original
+                    </span>
+                `;
+
+            }
+
+
+            let httpsText;
+
+
+            if (record.https) {
+
+                httpsText = `
+                    <span class="https-yes">
+                        <i class="fa-solid fa-lock"></i>
+                        Yes
+                    </span>
+                `;
+
+            } else {
+
+                httpsText = `
+                    <span class="https-no">
+                        <i class="fa-solid fa-lock-open"></i>
+                        No
+                    </span>
+                `;
+
+            }
+
+
+            let responseTime =
+                record.responseTime !== null &&
+                record.responseTime !== undefined
+                    ? record.responseTime + " ms"
+                    : "—";
+
+
+            return `
+
+                <tr>
+
+                    <td>
+                        ${index + 1}
+                    </td>
+
+
+                    <td>
+
+                        <div class="url-cell">
+
+                            <i class="fa-solid fa-link"></i>
+
+                            <span
+                                title="${escapeHtml(record.url)}"
+                            >
+                                ${escapeHtml(record.url)}
+                            </span>
+
+                        </div>
+
+                    </td>
+
+
+                    <td>
+                        ${record.statusCode ?? "—"}
+                    </td>
+
+
+                    <td>
+                        ${statusBadge}
+                    </td>
+
+
+                    <td>
+                        ${httpsText}
+                    </td>
+
+
+                    <td>
+                        ${duplicateBadge}
+                    </td>
+
+
+                    <td>
+                        ${responseTime}
+                    </td>
+
+
+                    <td>
+                        ${formatDate(record.verifiedAt)}
+                    </td>
+
+
+                    <td>
+
+                        <button
+                            class="btn btn-secondary view-btn"
+                            onclick="showDetails(${record.id})"
+                        >
+
+                            <i class="fa-solid fa-eye"></i>
+
+                            View
+
+                        </button>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        }).join("");
+
+}
+
+
+/* DETAILS */
+
+function showDetails(id) {
+
+    const record =
+        history.find(function (item) {
+
+            return item.id === id;
+
+        });
+
+
+    if (!record) {
+        return;
+    }
+
+
+    detailUrlTitle.textContent =
+        record.url;
+
+
+    detailGrid.innerHTML = `
+
+        <div class="detail-item">
+
+            <div class="detail-label">
+                Verification ID
+            </div>
+
+            <div class="detail-value">
+                ${record.id}
+            </div>
+
+        </div>
+
+
+        <div class="detail-item">
+
+            <div class="detail-label">
+                HTTP Status
+            </div>
+
+            <div class="detail-value">
+                ${record.statusCode ?? "—"}
+            </div>
+
+        </div>
+
+
+        <div class="detail-item">
+
+            <div class="detail-label">
+                Reachable
+            </div>
+
+            <div class="detail-value">
+                ${record.reachable ? "Yes" : "No"}
+            </div>
+
+        </div>
+
+
+        <div class="detail-item">
+
+            <div class="detail-label">
+                HTTPS
+            </div>
+
+            <div class="detail-value">
+                ${record.https ? "Enabled" : "Not Enabled"}
+            </div>
+
+        </div>
+
+
+        <div class="detail-item">
+
+            <div class="detail-label">
+                Duplicate
+            </div>
+
+            <div class="detail-value">
+                ${record.duplicate ? "Yes" : "No"}
+            </div>
+
+        </div>
+
+
+        <div class="detail-item">
+
+            <div class="detail-label">
+                Response Time
+            </div>
+
+            <div class="detail-value">
+                ${
+                    record.responseTime !== null &&
+                    record.responseTime !== undefined
+                    ? record.responseTime + " ms"
+                    : "—"
+                }
+            </div>
+
+        </div>
+
+
+        <div class="detail-item">
+
+            <div class="detail-label">
+                Redirected
+            </div>
+
+            <div class="detail-value">
+                ${record.redirected ? "Yes" : "No"}
+            </div>
+
+        </div>
+
+
+        <div class="detail-item">
+
+            <div class="detail-label">
+                Verified At
+            </div>
+
+            <div class="detail-value">
+                ${formatDate(record.verifiedAt)}
+            </div>
+
+        </div>
+
+
+        <div class="detail-item">
+
+            <div class="detail-label">
+                Redirect Information
+            </div>
+
+            <div class="detail-value">
+                ${escapeHtml(record.redirectInfo || "No redirect")}
+            </div>
+
+        </div>
+
+
+        <div class="detail-item">
+
+            <div class="detail-label">
+                Message
+            </div>
+
+            <div class="detail-value">
+                ${escapeHtml(record.message || "—")}
+            </div>
+
+        </div>
+
+    `;
+
+
+    detailModal.classList.add("show");
+
+}
+
+
+/* CLOSE MODAL */
+
+document
+    .getElementById("closeDetailBtn")
+    .addEventListener("click", function () {
+
+        detailModal.classList.remove("show");
+
+    });
+
+
+detailModal.addEventListener(
+    "click",
+    function(event) {
+
+        if (event.target === detailModal) {
+
+            detailModal.classList.remove("show");
+
+        }
+
+    }
+);
+
+
+/* FILTER EVENTS */
+
+searchInput.addEventListener(
+    "input",
+    renderHistory
+);
+
+statusFilter.addEventListener(
+    "change",
+    renderHistory
+);
+
+duplicateFilter.addEventListener(
+    "change",
+    renderHistory
+);
+
+httpsFilter.addEventListener(
+    "change",
+    renderHistory
+);
+
+dateFilter.addEventListener(
+    "change",
+    renderHistory
+);
+
+sortSelect.addEventListener(
+    "change",
+    renderHistory
+);
+
+
+/* RESET */
+
+resetFiltersBtn.addEventListener(
+    "click",
+    function() {
+
+        searchInput.value = "";
+
+        statusFilter.value = "all";
+
+        duplicateFilter.value = "all";
+
+        httpsFilter.value = "all";
+
+        dateFilter.value = "";
+
+        sortSelect.value = "date-desc";
+
+        renderHistory();
+
+    }
+);
+
+
+/* LOGOUT */
+
+document
+    .getElementById("logoutLink")
+    .addEventListener("click", function() {
+
+        localStorage.removeItem("userEmail");
+
+    });
+
+
+/* START */
+
+loadHistory();
+
+</script>
+
+</body>
+</html>
